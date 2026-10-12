@@ -369,3 +369,39 @@ tfoot td {
     align-items: flex-start;
   }
 }
+
+
+/* Authenticated user header */
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-email {
+  font-size: 13px;
+  color: #cbd5e1;
+  overflow-wrap: anywhere;
+}
+
+.logout-button {
+  background: #334155;
+  border: 1px solid #475569;
+  padding: 9px 14px;
+  white-space: nowrap;
+}
+
+.logout-button:hover {
+  background: #475569;
+}
+
+@media (max-width: 768px) {
+  .user-controls {
+    gap: 8px;
+  }
+
+  .user-email {
+    display: none;
+  }
+}
