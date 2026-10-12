@@ -1,4 +1,5 @@
 import ExpenseCategoryManager from "./ExpenseCategoryManager";
+import PropertyManagement from "./PropertyManagement";
 import { useEffect, useState } from "react";
 import YearSelector from "./YearSelector";
 import SummaryCards from "./SummaryCards";
@@ -17,6 +18,9 @@ import {
   renameCategory,
   getExpenses,
   saveExpense,
+  updateProperty,
+  archiveProperty,
+  restoreProperty,
 } from "../services/expenseService";
 
 import "../App.css";
@@ -184,6 +188,82 @@ function SupabaseDashboard({ user, onLogout }) {
     }
   }
 
+async function handleUpdateProperty(propertyId, updates) {
+  setWorking(true);
+  setError("");
+
+  try {
+    const updated = await updateProperty(propertyId, updates);
+
+    setProperties((previous) =>
+      previous.map((property) =>
+        property.id === updated.id ? updated : property
+      )
+    );
+
+    setStatus("Property updated successfully.");
+  } catch (err) {
+    setError(err.message);
+    throw err;
+  } finally {
+    setWorking(false);
+  }
+}
+
+async function handleArchiveProperty(propertyId) {
+  setWorking(true);
+  setError("");
+
+  try {
+    const updated = await archiveProperty(propertyId);
+
+    const nextProperties = properties.map((property) =>
+      property.id === updated.id ? updated : property
+    );
+
+    setProperties(nextProperties);
+
+    // Switch to another active property when necessary.
+    if (selectedId === propertyId) {
+      const nextActive = nextProperties.find(
+        (property) => !property.archived_at
+      );
+
+      setSelectedId(nextActive?.id || "");
+    }
+
+    setStatus("Property archived. Expense history preserved.");
+  } catch (err) {
+    setError(err.message);
+    throw err;
+  } finally {
+    setWorking(false);
+  }
+}
+
+async function handleRestoreProperty(propertyId) {
+  setWorking(true);
+  setError("");
+
+  try {
+    const restored = await restoreProperty(propertyId);
+
+    setProperties((previous) =>
+      previous.map((property) =>
+        property.id === restored.id ? restored : property
+      )
+    );
+
+    setSelectedId(restored.id);
+    setStatus("Property restored successfully.");
+  } catch (err) {
+    setError(err.message);
+    throw err;
+  } finally {
+    setWorking(false);
+  }
+}
+
   async function handleAddCategory(event) {
     event.preventDefault();
 
@@ -237,7 +317,15 @@ function SupabaseDashboard({ user, onLogout }) {
   }
 
   async function handleSaveExpense(categoryId, month, amount) {
-    if (!selectedId) return;
+    if (
+      !selectedId ||
+      !properties.some(
+        (property) =>
+          property.id === selectedId && !property.archived_at
+      )
+    ) {
+      throw new Error("Select an active property before editing expenses.");
+    }
 
     setWorking(true);
     setError("");
@@ -305,7 +393,9 @@ function SupabaseDashboard({ user, onLogout }) {
   }
 
   const selectedProperty = properties.find(
-    (property) => property.id === selectedId
+    (property) =>
+      property.id === selectedId &&
+      !property.archived_at
   );
 
   const monthlyTotals = MONTHS.map((_, index) =>
@@ -371,62 +461,33 @@ function SupabaseDashboard({ user, onLogout }) {
           </p>
         )}
 
-        <SummaryCards
-          propertyCount={properties.length}
-          propertyTotal={yearlyTotal}
-          portfolioTotal={portfolioTotal}
-          year={year}
-        />
+<SummaryCards
+  propertyCount={
+    properties.filter((property) => !property.archived_at).length
+  }
+  propertyTotal={yearlyTotal}
+  portfolioTotal={portfolioTotal}
+  year={year}
+/>
 
-        <section className="panel">
-          <h3>My Properties</h3>
+        
+<PropertyManagement
+  properties={properties}
+  selectedId={selectedId}
+  onSelectProperty={setSelectedId}
+  onAddProperty={async (name) => {
+    const property = await createProperty(name);
 
-          <form
-            className="property-form"
-            onSubmit={handleAddProperty}
-          >
-            <input
-              type="text"
-              value={propertyName}
-              maxLength={200}
-              placeholder="Enter property name or address"
-              onChange={(event) =>
-                setPropertyName(event.target.value)
-              }
-              required
-            />
+    setProperties((previous) => [...previous, property]);
+    setSelectedId(property.id);
+    setStatus("Property created successfully.");
+  }}
+  onUpdateProperty={handleUpdateProperty}
+  onArchiveProperty={handleArchiveProperty}
+  onRestoreProperty={handleRestoreProperty}
+  disabled={working}
+/>
 
-            <button type="submit" disabled={working}>
-              + Add Property
-            </button>
-          </form>
-
-          {properties.length > 0 && (
-            <div className="property-selection">
-              <label htmlFor="property-select">
-                Select Property
-              </label>
-
-              <select
-                id="property-select"
-                value={selectedId}
-                disabled={working}
-                onChange={(event) =>
-                  setSelectedId(event.target.value)
-                }
-              >
-                {properties.map((property) => (
-                  <option
-                    key={property.id}
-                    value={property.id}
-                  >
-                    {property.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </section>
 
         {selectedProperty ? (
           <>
