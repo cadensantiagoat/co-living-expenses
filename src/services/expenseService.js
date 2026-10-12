@@ -50,6 +50,83 @@ export async function createProperty(name) {
   return data;
 }
 
+
+// -------------------------------------------
+// PROPERTY MANAGEMENT
+// -------------------------------------------
+
+// Edit a property's name and address.
+export async function updateProperty(propertyId, updates) {
+  const user = await getCurrentUser();
+
+  const name = updates.name.trim();
+  const address = updates.address.trim();
+
+  if (!name || name.length > 200) {
+    throw new Error("Property name must be 1–200 characters.");
+  }
+
+  if (address.length > 500) {
+    throw new Error("Address cannot exceed 500 characters.");
+  }
+
+  const { data, error } = await supabase
+    .from("properties")
+    .update({
+      name,
+      address: address || null,
+    })
+    .eq("id", propertyId)
+    .eq("user_id", user.id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
+
+// Archive a property without deleting its expenses.
+export async function archiveProperty(propertyId) {
+  const user = await getCurrentUser();
+
+  const { data, error } = await supabase
+    .from("properties")
+    .update({
+      archived_at: new Date().toISOString(),
+    })
+    .eq("id", propertyId)
+    .eq("user_id", user.id)
+    .is("archived_at", null)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
+
+// Restore an archived property.
+export async function restoreProperty(propertyId) {
+  const user = await getCurrentUser();
+
+  const { data, error } = await supabase
+    .from("properties")
+    .update({
+      archived_at: null,
+    })
+    .eq("id", propertyId)
+    .eq("user_id", user.id)
+    .not("archived_at", "is", null)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
+
+
 // -------------------------------------------
 // EXPENSE CATEGORIES
 // -------------------------------------------
