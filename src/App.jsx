@@ -13,7 +13,7 @@ import {
 
 import "./App.css";
 
-const STORAGE_KEY = "property-expense-tracker-v1";
+const STORAGE_KEY_PREFIX = "property-expense-tracker-v1";
 
 function createProperty(name) {
   return {
@@ -23,27 +23,37 @@ function createProperty(name) {
   };
 }
 
-function loadProperties() {
+
+function loadProperties(userId) {
+  const storageKey = `${STORAGE_KEY_PREFIX}-${userId}`;
+
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(storageKey);
     return saved ? JSON.parse(saved) : [];
   } catch {
     return [];
   }
 }
 
-function App() {
-  const [properties, setProperties] = useState(loadProperties);
+
+function App({ user, onLogout }) {
+  const [properties, setProperties] = useState(
+    () => loadProperties(user.uid)
+  );
   const [selectedId, setSelectedId] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
 
   // Automatically save when property data changes
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(properties)
-    );
-  }, [properties]);
+  
+useEffect(() => {
+  const storageKey = `${STORAGE_KEY_PREFIX}-${user.uid}`;
+
+  localStorage.setItem(
+    storageKey,
+    JSON.stringify(properties)
+  );
+}, [properties, user.uid]);
+
 
   const selectedProperty =
     properties.find(
@@ -142,14 +152,27 @@ function App() {
 
   return (
     <div className="app">
-      <header className="header">
-        <div className="header-inner">
-          <h1>Property Expense Tracker</h1>
-          <span className="version">
-            Local Development
-          </span>
-        </div>
-      </header>
+      
+<header className="header">
+  <div className="header-inner">
+    <h1>Property Expense Tracker</h1>
+
+    <div className="user-controls">
+      <span className="user-email">
+        {user.email}
+      </span>
+
+      <button
+        className="logout-button"
+        onClick={onLogout}
+        type="button"
+      >
+        Sign Out
+      </button>
+    </div>
+  </div>
+</header>
+
 
       <main className="container">
         <section className="intro">
