@@ -13,8 +13,7 @@ function SupabaseAuthPage() {
   const [message, setMessage] = useState("");
 
   // Return users to our authentication testing page.
-  const redirectUrl =
-    `${window.location.origin}/?supabase-auth-test=1`;
+  const redirectUrl = window.location.origin;
 
   function clearMessages() {
     setError("");

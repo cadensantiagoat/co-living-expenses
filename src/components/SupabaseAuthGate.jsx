@@ -1,4 +1,4 @@
-
+import SupabaseDashboard from "./SupabaseDashboard"
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import SupabaseAuthPage from "./SupabaseAuthPage";
@@ -137,62 +137,15 @@ function SupabaseAuthGate() {
     return <SupabaseAuthPage />;
   }
 
-  return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h1>Property Expense Tracker</h1>
-
-        <p className="auth-subtitle">
-          Supabase Authentication Test
-        </p>
-
-        <h2>Authentication Successful!</h2>
-
-        <p>
-          You are signed in using Supabase.
-        </p>
-
-        <p>
-          <strong>Email:</strong>{" "}
-          {session.user.email}
-        </p>
-
-        <p>
-          <strong>User ID:</strong>
-        </p>
-
-        <p className="auth-user-id">
-          {session.user.id}
-        </p>
-
-        {message && (
-          <p className="auth-message" role="status">
-            {message}
-          </p>
-        )}
-
-        {error && (
-          <p className="auth-error" role="alert">
-            {error}
-          </p>
-        )}
-
-        <button
-          className="auth-submit"
-          type="button"
-          onClick={handleLogout}
-        >
-          Sign Out
-        </button>
-
-        <p className="auth-subtitle auth-test-note">
-          Your PostgreSQL tables are ready.
-          We'll connect the expense dashboard to
-          these tables in the next development step.
-        </p>
-      </div>
-    </div>
+  
+return (
+    <SupabaseDashboard
+      key={session.user.id}
+      user={session.user}
+      onLogout={handleLogout}
+    />
   );
+  
 }
 
 export default SupabaseAuthGate;

@@ -405,3 +405,41 @@ tfoot td {
     display: none;
   }
 }
+
+/* Year selector */
+
+.year-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.year-selector-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.year-selector-controls input {
+  width: 75px;
+  padding: 9px 5px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  text-align: center;
+}
+
+.year-arrow {
+  background: #e2e8f0;
+  color: #334155;
+  padding: 9px 12px;
+}
+
+.year-arrow:hover {
+  background: #cbd5e1;
+}
+
+.year-error {
+  color: #b91c1c;
+  font-size: 12px;
+  max-width: 200px;
+}
