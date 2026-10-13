@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
+    "exceljs": "^4.4.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -22,6 +23,6 @@
     "vite": "^8.3.0"
   },
   "engines": {
-  "node": ">=24.15.0 <25"
-}
+    "node": ">=24.15.0 <25"
+  }
 }

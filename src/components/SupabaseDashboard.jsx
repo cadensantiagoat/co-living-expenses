@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import YearSelector from "./YearSelector";
 import SummaryCards from "./SummaryCards";
 import MonthlyChart from "./MonthlyChart";
+import { exportExpenseWorkbook } from "../services/excelExportService";
 
 import {
   MONTHS,
@@ -104,6 +105,7 @@ function SupabaseDashboard({ user, onLogout }) {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [showArchived, setShowArchived] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   // Load property and category data after login.
   useEffect(() => {
@@ -165,6 +167,24 @@ function SupabaseDashboard({ user, onLogout }) {
       active = false;
     };
   }, [user.id, year]);
+
+async function handleExportExcel() {
+  if (exporting) return;
+
+  setExporting(true);
+  setError("");
+  setStatus("Preparing Excel workbook...");
+
+  try {
+    await exportExpenseWorkbook();
+    setStatus("Excel workbook downloaded successfully.");
+  } catch (err) {
+    setError(`Excel export failed: ${err.message}`);
+    setStatus("Excel export failed.");
+  } finally {
+    setExporting(false);
+  }
+}
 
   async function handleAddProperty(event) {
     event.preventDefault();
@@ -448,6 +468,14 @@ const isArchived = Boolean(selectedProperty?.archived_at);
           <p>
             Manage your properties and expenses with PostgreSQL.
           </p>
+          <button
+            type="button"
+            
+            onClick={handleExportExcel}
+            disabled={exporting || loading}
+          >
+            {exporting ? "Generating Excel..." : "Download Excel Workbook"}
+          </button>
         </section>
 
         {status && (
@@ -476,13 +504,13 @@ const isArchived = Boolean(selectedProperty?.archived_at);
   properties={properties}
   selectedId={selectedId}
   onSelectProperty={setSelectedId}
-  onAddProperty={async (name) => {
-    const property = await createProperty(name);
+  onAddProperty={async (name, address) => {
+  const property = await createProperty(name, address);
 
-    setProperties((previous) => [...previous, property]);
-    setSelectedId(property.id);
-    setStatus("Property created successfully.");
-  }}
+  setProperties((previous) => [...previous, property]);
+  setSelectedId(property.id);
+  setStatus("Property created successfully.");
+}}
   onUpdateProperty={handleUpdateProperty}
   onArchiveProperty={handleArchiveProperty}
   onRestoreProperty={handleRestoreProperty}

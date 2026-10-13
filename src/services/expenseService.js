@@ -33,14 +33,27 @@ export async function getProperties() {
   return data;
 }
 
-export async function createProperty(name) {
+
+export async function createProperty(name, address = "") {
   const user = await getCurrentUser();
+
+  const cleanName = name.trim();
+  const cleanAddress = address.trim();
+
+  if (!cleanName || cleanName.length > 200) {
+    throw new Error("Property name must be 1–200 characters.");
+  }
+
+  if (cleanAddress.length > 500) {
+    throw new Error("Address cannot exceed 500 characters.");
+  }
 
   const { data, error } = await supabase
     .from("properties")
     .insert({
       user_id: user.id,
-      name: name.trim(),
+      name: cleanName,
+      address: cleanAddress || null,
     })
     .select()
     .single();
@@ -49,6 +62,7 @@ export async function createProperty(name) {
 
   return data;
 }
+
 
 
 // -------------------------------------------

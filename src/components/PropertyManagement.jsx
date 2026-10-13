@@ -15,6 +15,7 @@ function PropertyManagement({
   disabled = false,
 })  {
   const [newName, setNewName] = useState("");
+  const [newAddress, setNewAddress] = useState("");
 
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
@@ -35,25 +36,31 @@ function PropertyManagement({
     ? archivedProperties
     : activeProperties;
 
-  async function handleAdd(event) {
-    event.preventDefault();
+  
+async function handleAdd(event) {
+  event.preventDefault();
 
-    const name = newName.trim();
-    if (!name || busy) return;
+  const name = newName.trim();
+  const address = newAddress.trim();
 
-    setBusy(true);
-    setError("");
+  if (!name || busy || disabled) return;
 
-    try {
-      await onAddProperty(name);
-      setNewName("");
-      onShowArchivedChange(false);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setBusy(false);
-    }
+  setBusy(true);
+  setError("");
+
+  try {
+    await onAddProperty(name, address);
+
+    setNewName("");
+    setNewAddress("");
+    onShowArchivedChange(false);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setBusy(false);
   }
+}
+
 
   function startEditing(property) {
     setEditingId(property.id);
@@ -126,21 +133,48 @@ function PropertyManagement({
         </div>
       </div>
 
-      <form className="pm-add-form" onSubmit={handleAdd}>
-        <input
-          type="text"
-          value={newName}
-          maxLength={200}
-          placeholder="Enter a property name or address"
-          disabled={disabled || busy}
-          onChange={(event) => setNewName(event.target.value)}
-          required
-        />
+     
+<form className="pm-add-form" onSubmit={handleAdd}>
+  <div className="pm-add-fields">
+    <div className="pm-field">
+      <label htmlFor="new-property-name">
+        Property Name
+      </label>
 
-        <button type="submit" disabled={disabled || busy}>
-          + Add Property
-        </button>
-      </form>
+      <input
+        id="new-property-name"
+        type="text"
+        value={newName}
+        maxLength={200}
+        placeholder="e.g. Oak Street Duplex"
+        disabled={disabled || busy}
+        onChange={(event) => setNewName(event.target.value)}
+        required
+      />
+    </div>
+
+    <div className="pm-field">
+      <label htmlFor="new-property-address">
+        Property Address (optional)
+      </label>
+
+      <input
+        id="new-property-address"
+        type="text"
+        value={newAddress}
+        maxLength={500}
+        placeholder="Street address, city, state"
+        disabled={disabled || busy}
+        onChange={(event) => setNewAddress(event.target.value)}
+      />
+    </div>
+  </div>
+
+  <button type="submit" disabled={disabled || busy}>
+    + Add Property
+  </button>
+</form>
+
 
       <div className="pm-tabs" role="group" aria-label="Property status">
         <button
