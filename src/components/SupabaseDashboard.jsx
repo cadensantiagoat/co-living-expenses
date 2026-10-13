@@ -103,6 +103,7 @@ function SupabaseDashboard({ user, onLogout }) {
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
+  const [showArchived, setShowArchived] = useState(false);
 
   // Load property and category data after login.
   useEffect(() => {
@@ -393,10 +394,10 @@ async function handleRestoreProperty(propertyId) {
   }
 
   const selectedProperty = properties.find(
-    (property) =>
-      property.id === selectedId &&
-      !property.archived_at
-  );
+  (property) => property.id === selectedId
+);
+
+const isArchived = Boolean(selectedProperty?.archived_at);
 
   const monthlyTotals = MONTHS.map((_, index) =>
     selectedId ? getMonthlyTotal(selectedId, index + 1) : 0
@@ -485,6 +486,8 @@ async function handleRestoreProperty(propertyId) {
   onUpdateProperty={handleUpdateProperty}
   onArchiveProperty={handleArchiveProperty}
   onRestoreProperty={handleRestoreProperty}
+  showArchived={showArchived}
+  onShowArchivedChange={setShowArchived}
   disabled={working}
 />
 
@@ -497,7 +500,12 @@ async function handleRestoreProperty(propertyId) {
               <div className="table-header">
                 <div>
                   <h3>{selectedProperty.name}</h3>
-                  <p>Annual Expense Breakdown</p>
+
+                  <p>
+                    {isArchived
+                      ? "Archived Property — Read-Only Expense History"
+                      : "Annual Expense Breakdown"}
+                  </p>
                 </div>
 
                 <YearSelector
@@ -540,7 +548,7 @@ async function handleRestoreProperty(propertyId) {
                                   category.id,
                                   month
                                 )}
-                                disabled={working}
+                                disabled={working || isArchived}
                                 onSave={(amount) =>
                                   handleSaveExpense(
                                     category.id,
@@ -582,10 +590,10 @@ async function handleRestoreProperty(propertyId) {
               </div>
 
               <p className="save-note">
-                Expense entries are saved when you leave
-                an edited input. Check the status message
-                to confirm a successful save.
-              </p>
+                {isArchived
+                ? "This property is archived. You can view its expense history, but you must restore it before making changes."
+                : "Expense entries are saved when you leave an edited input. Check the status message to confirm a successful save."}
+            </p>
             </section>
           </>
         ) : (

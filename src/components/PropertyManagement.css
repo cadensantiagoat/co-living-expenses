@@ -64,16 +64,20 @@
     gap: 12px;
   }
   
-  .pm-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    background: #f8fafc;
-  }
+  
+.pm-card {
+  position: relative;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: #f8fafc;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
   
   .pm-property-info {
     display: flex;
@@ -156,3 +160,51 @@
     }
   }
   
+  
+/* Clickable property cards */
+
+.pm-card:hover {
+  background: #f1f5f9;
+}
+
+.pm-card-selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.pm-card-selected:hover {
+  background: #dbeafe;
+}
+
+/* Invisible button covering the whole card */
+.pm-card-open {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-radius: inherit;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.pm-card-open:hover {
+  background: transparent;
+}
+
+.pm-card-open:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.pm-card-open:disabled {
+  cursor: default;
+}
+
+/* Keep action buttons and edit forms clickable */
+.pm-card .pm-actions,
+.pm-card .pm-edit-form {
+  position: relative;
+  z-index: 2;
+}

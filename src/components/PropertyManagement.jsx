@@ -10,10 +10,11 @@ function PropertyManagement({
   onUpdateProperty,
   onArchiveProperty,
   onRestoreProperty,
+  showArchived,
+  onShowArchivedChange,
   disabled = false,
-}) {
+})  {
   const [newName, setNewName] = useState("");
-  const [showArchived, setShowArchived] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
@@ -46,7 +47,7 @@ function PropertyManagement({
     try {
       await onAddProperty(name);
       setNewName("");
-      setShowArchived(false);
+      onShowArchivedChange(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -108,7 +109,7 @@ function PropertyManagement({
 
     try {
       await onRestoreProperty(property.id);
-      setShowArchived(false);
+      onShowArchivedChange(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -145,7 +146,7 @@ function PropertyManagement({
         <button
           type="button"
           className={!showArchived ? "pm-tab active" : "pm-tab"}
-          onClick={() => setShowArchived(false)}
+          onClick={() => onShowArchivedChange(false)}
         >
           Active ({activeProperties.length})
         </button>
@@ -153,7 +154,7 @@ function PropertyManagement({
         <button
           type="button"
           className={showArchived ? "pm-tab active" : "pm-tab"}
-          onClick={() => setShowArchived(true)}
+          onClick={() => onShowArchivedChange(true)}
         >
           Archived ({archivedProperties.length})
         </button>
@@ -173,7 +174,21 @@ function PropertyManagement({
         )}
 
         {visibleProperties.map((property) => (
-          <div className="pm-card" key={property.id}>
+  <div
+    className={`pm-card ${
+      selectedId === property.id ? "pm-card-selected" : ""
+    }`}
+    key={property.id}
+  >
+    {editingId !== property.id && (
+      <button
+        type="button"
+        className="pm-card-open"
+        onClick={() => onSelectProperty(property.id)}
+        aria-label={`View expenses for ${property.name}`}
+        disabled={disabled || busy}
+      />
+    )}
             {editingId === property.id ? (
               <form className="pm-edit-form" onSubmit={handleUpdate}>
                 <label>
@@ -224,25 +239,14 @@ function PropertyManagement({
                     {property.address || "No address added"}
                   </span>
 
-                  {!property.archived_at &&
-                    property.id === selectedId && (
-                      <span className="pm-selected">
-                        Currently Selected
-                      </span>
-                    )}
+                  {property.id === selectedId && (
+                    <span className="pm-selected">
+                      Currently Selected
+                    </span>
+                  )}
                 </div>
 
                 <div className="pm-actions">
-                  {!property.archived_at && (
-                    <button
-                      type="button"
-                      className="pm-secondary"
-                      disabled={disabled || busy}
-                      onClick={() => onSelectProperty(property.id)}
-                    >
-                      View
-                    </button>
-                  )}
 
                   <button
                     type="button"
@@ -281,4 +285,4 @@ function PropertyManagement({
   );
 }
 
-export default PropertyManagement;
+export default PropertyManagement; 
