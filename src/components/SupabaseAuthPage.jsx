@@ -1,0 +1,244 @@
+
+import { useState } from "react";
+import { supabase } from "../lib/supabase";
+import "./AuthPage.css";
+
+function SupabaseAuthPage() {
+  const [mode, setMode] = useState("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  // Return users to our authentication testing page.
+  const redirectUrl = window.location.origin;
+
+  function clearMessages() {
+    setError("");
+    setMessage("");
+  }
+
+  function changeMode() {
+    setMode(mode === "login" ? "register" : "login");
+    setPassword("");
+    clearMessages();
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    clearMessages();
+    setLoading(true);
+
+    try {
+      if (mode === "register") {
+        const { data, error: authError } =
+          await supabase.auth.signUp({
+            email: email.trim(),
+            password,
+            options: {
+              emailRedirectTo: redirectUrl,
+            },
+          });
+
+        if (authError) throw authError;
+
+        if (!data.session) {
+          setMessage(
+            "Check your email for a confirmation link. " +
+            "After confirming your account, you can sign in."
+          );
+        }
+      } else {
+        const { error: authError } =
+          await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password,
+          });
+
+        if (authError) throw authError;
+      }
+    } catch (err) {
+      setError(err.message || "Authentication failed.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    clearMessages();
+    setLoading(true);
+
+    const { error: authError } =
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+        },
+      });
+
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+    }
+    // On success, the browser redirects to Google.
+  }
+
+  async function handlePasswordReset() {
+    clearMessages();
+
+    if (!email.trim()) {
+      setError("Enter your email address first.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error: authError } =
+        await supabase.auth.resetPasswordForEmail(
+          email.trim(),
+          {
+            redirectTo: redirectUrl,
+          }
+        );
+
+      if (authError) throw authError;
+
+      setMessage(
+        "If the account is eligible, you'll receive " +
+        "an email with password reset instructions."
+      );
+    } catch (err) {
+      setError(err.message || "Password reset failed.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1>Property Expense Tracker</h1>
+
+        <p className="auth-subtitle">
+          Supabase Authentication
+        </p>
+
+        <h2>
+          {mode === "register"
+            ? "Create Your Account"
+            : "Welcome Back"}
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="email">
+            Email Address
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(event) =>
+              setEmail(event.target.value)
+            }
+            placeholder="you@example.com"
+            autoComplete="email"
+            required
+          />
+
+          <label htmlFor="password">
+            Password
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(event) =>
+              setPassword(event.target.value)
+            }
+            placeholder="Enter your password"
+            autoComplete={
+              mode === "register"
+                ? "new-password"
+                : "current-password"
+            }
+            minLength={6}
+            required
+          />
+
+          {error && (
+            <p className="auth-error" role="alert">
+              {error}
+            </p>
+          )}
+
+          {message && (
+            <p className="auth-message" role="status">
+              {message}
+            </p>
+          )}
+
+          <button
+            className="auth-submit"
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? "Please wait..."
+              : mode === "register"
+                ? "Create Account"
+                : "Sign In"}
+          </button>
+        </form>
+
+        {mode === "login" && (
+          <button
+            type="button"
+            className="auth-link-button"
+            disabled={loading}
+            onClick={handlePasswordReset}
+          >
+            Forgot Password?
+          </button>
+        )}
+
+        <div className="auth-divider">
+          <span>OR</span>
+        </div>
+
+        <button
+          type="button"
+          className="google-button"
+          disabled={loading}
+          onClick={handleGoogleSignIn}
+        >
+          Continue with Google
+        </button>
+
+        <p className="auth-switch">
+          {mode === "login"
+            ? "Don't have an account?"
+            : "Already have an account?"}
+          {" "}
+          <button
+            type="button"
+            className="auth-link-button"
+            disabled={loading}
+            onClick={changeMode}
+          >
+            {mode === "login"
+              ? "Create an account"
+              : "Sign in"}
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default SupabaseAuthPage;
