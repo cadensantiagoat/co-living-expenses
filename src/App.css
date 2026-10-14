@@ -685,3 +685,68 @@ tfoot td {
     padding: 11px 8px;
   }
 }
+
+
+/* Dashboard header redesign */
+
+.dashboard-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.dashboard-heading-text {
+  flex: 1;
+  min-width: 240px;
+}
+
+.dashboard-heading-text h1 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.dashboard-heading-text p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.dashboard-export-button {
+  flex-shrink: 0;
+  padding: 13px 20px;
+  border-radius: 9px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-export-button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.dashboard-export-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .dashboard-heading {
+    align-items: stretch;
+  }
+
+  .dashboard-export-button {
+    width: 100%;
+  }
+
+  .dashboard-heading-text h1 {
+    font-size: 25px;
+  }
+}

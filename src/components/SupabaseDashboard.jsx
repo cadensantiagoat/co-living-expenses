@@ -486,6 +486,7 @@ function goToNextMonth() {
       <main className="container">
         <section className="intro">
           
+
 <div className="dashboard-heading">
   <div className="dashboard-heading-text">
     <h1>Property Dashboard</h1>
@@ -505,6 +506,7 @@ function goToNextMonth() {
       : "Download Excel Workbook"}
   </button>
 </div>
+
 
         </section>
 
