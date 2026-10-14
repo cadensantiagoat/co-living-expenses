@@ -28,7 +28,7 @@ import "../App.css";
 
 // Display one editable expense amount.
 // Saving happens when the user leaves the input.
-function ExpenseCell({ amount, onSave, disabled }) {
+function ExpenseCell({ amount, onSave, disabled, inputId }) {
   const [value, setValue] = useState(
     amount === null ? "" : String(amount)
   );
@@ -82,6 +82,7 @@ function ExpenseCell({ amount, onSave, disabled }) {
       onBlur={handleBlur}
       aria-label="Expense amount"
       title={saving ? "Saving..." : "Edit expense"}
+      id={inputId}
     />
   );
 }
@@ -106,6 +107,16 @@ function SupabaseDashboard({ user, onLogout }) {
   const [status, setStatus] = useState("");
   const [showArchived, setShowArchived] = useState(false);
   const [exporting, setExporting] = useState(false);
+  
+  const [expenseView, setExpenseView] = useState("monthly");
+
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date().getMonth()
+  );
+
+  const [showSpendingChart, setShowSpendingChart] =
+    useState(false);
+
 
   // Load property and category data after login.
   useEffect(() => {
@@ -423,6 +434,16 @@ const isArchived = Boolean(selectedProperty?.archived_at);
     selectedId ? getMonthlyTotal(selectedId, index + 1) : 0
   );
 
+  const selectedMonthTotal = monthlyTotals[selectedMonth] ?? 0;
+
+function goToPreviousMonth() {
+  setSelectedMonth((previous) => (previous + 11) % 12);
+}
+
+function goToNextMonth() {
+  setSelectedMonth((previous) => (previous + 1) % 12);
+}
+
   const yearlyTotal = monthlyTotals.reduce(
     (sum, amount) => sum + amount,
     0
@@ -464,18 +485,27 @@ const isArchived = Boolean(selectedProperty?.archived_at);
 
       <main className="container">
         <section className="intro">
-          <h2>Property Dashboard</h2>
-          <p>
-            Manage your properties and expenses with PostgreSQL.
-          </p>
-          <button
-            type="button"
-            
-            onClick={handleExportExcel}
-            disabled={exporting || loading}
-          >
-            {exporting ? "Generating Excel..." : "Download Excel Workbook"}
-          </button>
+          
+<div className="dashboard-heading">
+  <div className="dashboard-heading-text">
+    <h1>Property Dashboard</h1>
+    <p>
+      Manage your properties and expenses with PostgreSQL.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    className="dashboard-export-button"
+    onClick={handleExportExcel}
+    disabled={exporting || loading}
+  >
+    {exporting
+      ? "Generating Excel..."
+      : "Download Excel Workbook"}
+  </button>
+</div>
+
         </section>
 
         {status && (
@@ -520,116 +550,324 @@ const isArchived = Boolean(selectedProperty?.archived_at);
 />
 
 
-        {selectedProperty ? (
-          <>
-            <MonthlyChart monthlyTotals={monthlyTotals} />
+        
+{selectedProperty ? (
+  <>
+    {/* =====================================
+        PROPERTY HEADER AND YEAR SELECTOR
+    ===================================== */}
+    <section className="panel">
+      <div className="table-header">
+        <div>
+          <h3>{selectedProperty.name}</h3>
 
-            <section className="panel">
-              <div className="table-header">
-                <div>
-                  <h3>{selectedProperty.name}</h3>
+          <p>
+            {isArchived
+              ? "Archived Property — Read-Only Expense History"
+              : "Manage and review property expenses"}
+          </p>
 
-                  <p>
-                    {isArchived
-                      ? "Archived Property — Read-Only Expense History"
-                      : "Annual Expense Breakdown"}
-                  </p>
-                </div>
+          {selectedProperty.address && (
+            <p>{selectedProperty.address}</p>
+          )}
+        </div>
 
-                <YearSelector
-                    year={year}
-                    onYearChange={setYear}
-                    disabled={working}
+        <YearSelector
+          year={year}
+          onYearChange={setYear}
+          disabled={working}
+        />
+      </div>
+    </section>
+
+    {/* =====================================
+        MONTHLY / ANNUAL VIEW SWITCH
+    ===================================== */}
+    <div className="expense-view-switch">
+      <button
+        type="button"
+        className={
+          expenseView === "monthly"
+            ? "expense-view-button active"
+            : "expense-view-button"
+        }
+        onClick={() => setExpenseView("monthly")}
+        aria-pressed={expenseView === "monthly"}
+      >
+        Monthly View
+      </button>
+
+      <button
+        type="button"
+        className={
+          expenseView === "annual"
+            ? "expense-view-button active"
+            : "expense-view-button"
+        }
+        onClick={() => setExpenseView("annual")}
+        aria-pressed={expenseView === "annual"}
+      >
+        Annual View
+      </button>
+    </div>
+
+    {/* =====================================
+        MONTHLY EXPENSE VIEW
+    ===================================== */}
+    {expenseView === "monthly" && (
+      <section className="panel monthly-expense-panel">
+        <div className="monthly-expense-heading">
+          <div>
+            <h3>Monthly Expenses</h3>
+
+            <p>
+              {isArchived
+                ? "Read-only expense history"
+                : "Enter and review expenses for one month."}
+            </p>
+          </div>
+        </div>
+
+        {/* Month navigation */}
+        <div className="month-navigation">
+          <button
+            type="button"
+            onClick={goToPreviousMonth}
+            aria-label="Previous month"
+          >
+            &larr;
+          </button>
+
+          <div className="month-navigation-label">
+            <h3>
+              {MONTHS[selectedMonth]} {year}
+            </h3>
+
+            <span>Selected expense period</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={goToNextMonth}
+            aria-label="Next month"
+          >
+            &rarr;
+          </button>
+        </div>
+
+        {/* Monthly total */}
+        <div className="monthly-total-card">
+          <span>Total Monthly Expenses</span>
+
+          <strong>
+            {formatMoney(selectedMonthTotal)}
+          </strong>
+        </div>
+
+        {/* Expense category inputs */}
+        <div className="monthly-expense-list">
+          <div className="monthly-expense-list-heading">
+            <span>Expense Category</span>
+            <span>Amount</span>
+          </div>
+
+          {categories.map((category) => (
+            <div
+              className="monthly-expense-row"
+              key={category.id}
+            >
+              <label
+                htmlFor={`monthly-${selectedId}-${year}-${selectedMonth}-${category.id}`}
+              >
+                {category.name}
+              </label>
+
+              <div className="monthly-expense-input">
+                <ExpenseCell
+                  key={`${selectedId}-${year}-${selectedMonth}-${category.id}`}
+                  inputId={`monthly-${selectedId}-${year}-${selectedMonth}-${category.id}`}
+                  amount={getAmount(
+                    selectedId,
+                    category.id,
+                    selectedMonth + 1
+                  )}
+                  disabled={working || isArchived}
+                  onSave={(amount) =>
+                    handleSaveExpense(
+                      category.id,
+                      selectedMonth + 1,
+                      amount
+                    )
+                  }
                 />
               </div>
+            </div>
+          ))}
+        </div>
 
-              <div className="table-scroll">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Category</th>
+        {/* Monthly total footer */}
+        <div className="monthly-expense-footer">
+          <strong>Monthly Total</strong>
 
-                      {MONTHS.map((month) => (
-                        <th key={month}>{month}</th>
-                      ))}
+          <strong>
+            {formatMoney(selectedMonthTotal)}
+          </strong>
+        </div>
 
-                      <th>Year Total</th>
-                    </tr>
-                  </thead>
+        {/* Save message */}
+        <p className="save-note">
+          {isArchived
+            ? "This property is archived. You can view its expense history, but you must restore it before making changes."
+            : "Expense entries are saved when you leave an edited input. Check the status message to confirm a successful save."}
+        </p>
+      </section>
+    )}
 
-                  <tbody>
-                    {categories.map((category) => (
-                      <tr key={category.id}>
-                        <td className="category-name">
-                          {category.name}
-                        </td>
+    {/* =====================================
+        ANNUAL EXPENSE VIEW
+    ===================================== */}
+    {expenseView === "annual" && (
+      <section className="panel">
+        <div className="table-header">
+          <div>
+            <h3>Annual Expense Breakdown</h3>
 
-                        {MONTHS.map((_, index) => {
-                          const month = index + 1;
-
-                          return (
-                            <td key={month}>
-                              <ExpenseCell
-                                key={`${selectedId}-${year}-${category.id}-${month}`}
-                                amount={getAmount(
-                                  selectedId,
-                                  category.id,
-                                  month
-                                )}
-                                disabled={working || isArchived}
-                                onSave={(amount) =>
-                                  handleSaveExpense(
-                                    category.id,
-                                    month,
-                                    amount
-                                  )
-                                }
-                              />
-                            </td>
-                          );
-                        })}
-
-                        <td className="total-cell">
-                          {formatMoney(
-                            getCategoryTotal(
-                              selectedId,
-                              category.id
-                            )
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-
-                  <tfoot>
-                    <tr>
-                      <td>Monthly Total</td>
-
-                      {MONTHS.map((_, index) => (
-                        <td key={index}>
-                          {formatMoney(monthlyTotals[index])}
-                        </td>
-                      ))}
-
-                      <td>{formatMoney(yearlyTotal)}</td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-
-              <p className="save-note">
-                {isArchived
-                ? "This property is archived. You can view its expense history, but you must restore it before making changes."
-                : "Expense entries are saved when you leave an edited input. Check the status message to confirm a successful save."}
+            <p>
+              {isArchived
+                ? "Read-only annual expense history"
+                : "Review and edit expenses across all 12 months."}
             </p>
-            </section>
-          </>
-        ) : (
-          <section className="panel empty-state">
-            <h3>No properties yet</h3>
-            <p>Add your first property to begin.</p>
-          </section>
-        )}
+          </div>
+        </div>
+
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+
+                {MONTHS.map((month) => (
+                  <th key={month}>{month}</th>
+                ))}
+
+                <th>Year Total</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {categories.map((category) => (
+                <tr key={category.id}>
+                  <td className="category-name">
+                    {category.name}
+                  </td>
+
+                  {MONTHS.map((_, index) => {
+                    const month = index + 1;
+
+                    return (
+                      <td key={month}>
+                        <ExpenseCell
+                          key={`${selectedId}-${year}-${category.id}-${month}`}
+                          amount={getAmount(
+                            selectedId,
+                            category.id,
+                            month
+                          )}
+                          disabled={working || isArchived}
+                          onSave={(amount) =>
+                            handleSaveExpense(
+                              category.id,
+                              month,
+                              amount
+                            )
+                          }
+                        />
+                      </td>
+                    );
+                  })}
+
+                  <td className="total-cell">
+                    {formatMoney(
+                      getCategoryTotal(
+                        selectedId,
+                        category.id
+                      )
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+
+            <tfoot>
+              <tr>
+                <td>Monthly Total</td>
+
+                {MONTHS.map((_, index) => (
+                  <td key={index}>
+                    {formatMoney(monthlyTotals[index])}
+                  </td>
+                ))}
+
+                <td>
+                  {formatMoney(yearlyTotal)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <p className="save-note">
+          {isArchived
+            ? "This property is archived. You can view its expense history, but you must restore it before making changes."
+            : "Expense entries are saved when you leave an edited input. Check the status message to confirm a successful save."}
+        </p>
+      </section>
+    )}
+
+    {/* =====================================
+        COLLAPSIBLE SPENDING CHART
+    ===================================== */}
+    <section className="chart-disclosure-section">
+      <button
+        type="button"
+        className="chart-disclosure-button"
+        onClick={() =>
+          setShowSpendingChart((previous) => !previous)
+        }
+        aria-expanded={showSpendingChart}
+      >
+        <span>
+          {showSpendingChart
+            ? "Hide Spending Chart"
+            : "Show Spending Chart"}
+        </span>
+
+        <span aria-hidden="true">
+          {showSpendingChart ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {showSpendingChart && (
+        <div className="chart-disclosure-content">
+          <MonthlyChart
+            monthlyTotals={monthlyTotals}
+          />
+        </div>
+      )}
+    </section>
+  </>
+) : (
+  /* =====================================
+      NO PROPERTY SELECTED
+  ===================================== */
+  <section className="panel empty-state">
+    <h3>No property selected</h3>
+    <p>
+      Add or select a property to begin tracking expenses.
+    </p>
+  </section>
+)}
+
 
 <ExpenseCategoryManager
   categories={categories}
