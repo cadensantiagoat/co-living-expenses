@@ -443,3 +443,414 @@ tfoot td {
   font-size: 12px;
   max-width: 200px;
 }
+
+
+/* ==========================================
+   MONTHLY EXPENSE DASHBOARD REDESIGN
+========================================== */
+
+/* Monthly / Annual selector */
+.expense-view-switch {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  padding: 6px;
+  margin: 20px 0;
+  box-sizing: border-box;
+  background: #e2e8f0;
+  border-radius: 12px;
+}
+
+.expense-view-switch .expense-view-button {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  background: transparent;
+  color: #475569;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.expense-view-switch .expense-view-button.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+
+.expense-view-switch .expense-view-button:hover {
+  background: #f8fafc;
+}
+
+/* Monthly expense panel */
+.monthly-expense-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 28px;
+}
+
+.monthly-expense-heading h3 {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 22px;
+}
+
+.monthly-expense-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Month navigation */
+.month-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 20px;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.month-navigation button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.month-navigation button:hover {
+  background: #e2e8f0;
+}
+
+.month-navigation-label {
+  flex: 1;
+  text-align: center;
+}
+
+.month-navigation-label h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.month-navigation-label span {
+  display: block;
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Featured monthly total */
+.monthly-total-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+}
+
+.monthly-total-card span {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.monthly-total-card strong {
+  color: #1d4ed8;
+  font-size: 32px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Category list */
+.monthly-expense-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.monthly-expense-list-heading,
+.monthly-expense-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 170px;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.monthly-expense-list-heading {
+  padding: 14px 18px;
+  background: #f8fafc;
+  border-bottom: 2px solid #cbd5e1;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.monthly-expense-list-heading span:last-child {
+  text-align: right;
+}
+
+.monthly-expense-row {
+  min-height: 62px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.monthly-expense-row:hover {
+  background: #f8fafc;
+}
+
+.monthly-expense-row label {
+  margin: 0;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.monthly-expense-input {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.monthly-expense-input input {
+  width: 100%;
+  min-width: 0;
+  max-width: 170px;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.monthly-expense-input input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.monthly-expense-input input:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+/* Bottom monthly total */
+.monthly-expense-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px 20px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  color: #0f172a;
+}
+
+.monthly-expense-footer strong {
+  font-size: 16px;
+}
+
+.monthly-expense-footer strong:last-child {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Helper text */
+.monthly-expense-panel .save-note {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Collapsible chart */
+.chart-disclosure-section {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 18px 0 26px;
+}
+
+.chart-disclosure-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 17px 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chart-disclosure-button:hover {
+  background: #f8fafc;
+}
+
+.chart-disclosure-content {
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* Responsive layout */
+@media (max-width: 700px) {
+  .monthly-expense-panel {
+    padding: 18px;
+    gap: 20px;
+  }
+
+  .month-navigation {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .month-navigation-label h3 {
+    font-size: 17px;
+  }
+
+  .monthly-total-card {
+    padding: 20px;
+  }
+
+  .monthly-total-card strong {
+    font-size: 26px;
+  }
+
+  .monthly-expense-list-heading,
+  .monthly-expense-row {
+    grid-template-columns: minmax(0, 1fr) 120px;
+    gap: 12px;
+  }
+
+  .monthly-expense-list-heading,
+  .monthly-expense-row {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .monthly-expense-input input {
+    max-width: 120px;
+  }
+
+  .expense-view-switch .expense-view-button {
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  .monthly-expense-list-heading,
+  .monthly-expense-row {
+    grid-template-columns: minmax(0, 1fr) 100px;
+  }
+
+  .monthly-expense-input input {
+    max-width: 100px;
+  }
+}
+
+
+/* Dashboard header redesign */
+
+.dashboard-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.dashboard-heading-text {
+  flex: 1;
+  min-width: 240px;
+}
+
+.dashboard-heading-text h1 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.dashboard-heading-text p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.dashboard-export-button {
+  flex-shrink: 0;
+  padding: 13px 20px;
+  border-radius: 9px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-export-button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.dashboard-export-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .dashboard-heading {
+    align-items: stretch;
+  }
+
+  .dashboard-export-button {
+    width: 100%;
+  }
+
+  .dashboard-heading-text h1 {
+    font-size: 25px;
+  }
+}
