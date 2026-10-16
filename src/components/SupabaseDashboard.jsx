@@ -498,12 +498,15 @@ function goToNextMonth() {
           {properties.filter((property) => !property.archived_at).map((property) => (
             <button type="button" key={property.id} className="sidebar-property" aria-pressed={selectedId === property.id} disabled={working} onClick={() => { setSelectedId(property.id); setWorkspace("expenses"); }}>
               <span className="property-initial" aria-hidden="true">{property.name.slice(0, 1).toUpperCase()}</span>
-              <span>{property.name}</span>
+              <span className="sidebar-property-details">
+                <strong>{property.name}</strong>
+                {property.address && <span>{property.address}</span>}
+                <small>{formatMoney(getMonthlyTotal(property.id, selectedMonth + 1))} · {MONTHS[selectedMonth]} {year}</small>
+              </span>
             </button>
           ))}
-          <button type="button" className="manage-properties" onClick={() => setWorkspace("properties")}>+ Manage properties</button>
+          <button type="button" className="manage-properties" onClick={() => setWorkspace("properties")}>+ Add or manage properties</button>
         </div>
-        <p className="sidebar-note">Every home.<br />Every expense.<br /><em>All in one place.</em></p>
       </aside>
       <main className="container" id="workspace">
         <div className="mobile-property-picker">
@@ -512,8 +515,9 @@ function goToNextMonth() {
             {!selectedId && <option value="">Select a property</option>}
             {properties.filter((property) => !property.archived_at || property.id === selectedId).map((property) => <option key={property.id} value={property.id}>{property.name}{property.archived_at ? " (archived)" : ""}</option>)}
           </select>
+          <button type="button" className="manage-properties" onClick={() => setWorkspace("properties")}>+ Add or manage properties</button>
         </div>
-        <section className="intro">
+        {workspace !== "expenses" && <section className="intro">
           
 
 <div className="dashboard-heading">
@@ -538,7 +542,7 @@ function goToNextMonth() {
 </div>
 
 
-        </section>
+        </section>}
 
         {status && (
           <p className="save-status" role="status">
@@ -551,15 +555,6 @@ function goToNextMonth() {
             {error}
           </p>
         )}
-
-{workspace === "expenses" && <SummaryCards
-  propertyCount={
-    properties.filter((property) => !property.archived_at).length
-  }
-  propertyTotal={yearlyTotal}
-  portfolioTotal={portfolioTotal}
-  year={year}
-/>}
 
         
 {workspace === "properties" && <PropertyManagement
@@ -591,7 +586,7 @@ function goToNextMonth() {
     <section className="property-context">
       <div className="table-header">
         <div>
-          <h3>{selectedProperty.name}</h3>
+          <h1>{selectedProperty.name}</h1>
 
           <p>
             {isArchived
@@ -604,11 +599,21 @@ function goToNextMonth() {
           )}
         </div>
 
-        <YearSelector
-          year={year}
-          onYearChange={setYear}
-          disabled={working}
-        />
+        <div className="expense-toolbar-controls">
+          <YearSelector
+            year={year}
+            onYearChange={setYear}
+            disabled={working}
+          />
+          <button
+            type="button"
+            className="dashboard-export-button"
+            onClick={handleExportExcel}
+            disabled={exporting || loading}
+          >
+            {exporting ? "Generating Excel..." : "Export workbook ↗"}
+          </button>
+        </div>
       </div>
     </section>
 
@@ -648,18 +653,6 @@ function goToNextMonth() {
     ===================================== */}
     {expenseView === "monthly" && (
       <section className="panel monthly-expense-panel">
-        <div className="monthly-expense-heading">
-          <div>
-            <h3>Monthly Expenses</h3>
-
-            <p>
-              {isArchived
-                ? "Read-only expense history"
-                : "Enter and review expenses for one month."}
-            </p>
-          </div>
-        </div>
-
         {/* Month navigation */}
         <div className="month-navigation">
           <button
@@ -735,15 +728,6 @@ function goToNextMonth() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Monthly total footer */}
-        <div className="monthly-expense-footer">
-          <strong>Monthly Total</strong>
-
-          <strong>
-            {formatMoney(selectedMonthTotal)}
-          </strong>
         </div>
 
         {/* Save message */}
@@ -887,6 +871,12 @@ function goToNextMonth() {
         </div>
       )}
     </section>
+    <SummaryCards
+      propertyCount={properties.filter((property) => !property.archived_at).length}
+      propertyTotal={yearlyTotal}
+      portfolioTotal={portfolioTotal}
+      year={year}
+    />
   </>
 ) : (
   /* =====================================

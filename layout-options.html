@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Property Expense Tracker · Layout options</title>
+  <style>
+    :root { --paper:#f7f6f0; --white:#fffefa; --ink:#283c32; --muted:#657062; --green:#285543; --soft:#e9eedf; --line:#dce1d4; --sand:#eee8da; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:24px; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:14px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    a { color:inherit; }
+    :focus-visible { outline:3px solid #77936a; outline-offset:4px; }
+    .intro { background:var(--green); color:var(--white); padding:52px max(24px,calc((100vw - 1280px)/2)); }
+    .kicker { font-size:11px; text-transform:uppercase; letter-spacing:.16em; font-weight:600; }
+    .intro .kicker { color:#d5dfca; }
+    h1 { font:clamp(34px,4.2vw,58px)/1.12 Georgia,serif; letter-spacing:-.035em; margin:16px 0; }
+    .intro p { max-width:690px; color:#e0e6d9; margin:0; font-size:16px; }
+    .jump { display:flex; gap:10px; flex-wrap:wrap; margin-top:30px; }
+    .jump a { padding:10px 16px; border:1px solid #6e8977; border-radius:30px; text-decoration:none; font-size:13px; }
+    .jump a:hover { background:#3b6753; }
+    main { max-width:1344px; margin:auto; padding:12px 32px 64px; }
+    .option { padding-top:52px; }
+    .option-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:20px; }
+    .option-heading h2 { font:32px/1.2 Georgia,serif; margin:6px 0 10px; letter-spacing:-.02em; }
+    .option-heading p { color:var(--muted); margin:0; max-width:780px; }
+    .tag { display:inline-block; background:var(--soft); color:var(--green); padding:5px 10px; border-radius:30px; white-space:nowrap; font-size:11px; font-weight:600; }
+    .tradeoff { margin:14px 0 0; color:var(--muted); font-size:12px; }
+    .screen { background:var(--white); border:1px solid #cfd7c7; border-radius:14px; overflow:hidden; box-shadow:0 12px 38px #283c3208; }
+    .appbar { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 24px; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:650; font-size:13px; }
+    .mark { background:var(--green); color:var(--white); border-radius:8px; width:30px; height:32px; display:grid; place-items:center; font:25px Georgia,serif; }
+    .account { font-size:11px; color:var(--muted); }
+    .shell { display:grid; grid-template-columns:188px minmax(0,1fr); }
+    .rail { padding:24px 16px; border-right:1px solid var(--line); background:#f5f5ed; }
+    .rail .kicker { font-size:9px; margin:0 10px 14px; color:var(--muted); }
+    .rail-item { display:block; padding:10px 12px; border-radius:7px; margin:3px 0; font-size:12px; }
+    .rail-item.current { background:var(--green); color:var(--white); }
+    .rail-item.selected { background:var(--soft); color:var(--green); font-weight:600; }
+    .rail-divider { border:0; border-top:1px solid var(--line); margin:24px 0; }
+    .workspace { min-width:0; padding:26px 30px; }
+    .toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:22px; }
+    .toolbar h3 { font-size:21px; font-weight:550; letter-spacing:-.02em; margin:0; }
+    .sub { color:var(--muted); font-size:11px; margin:3px 0 0; }
+    .controls { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+    .pill { display:inline-block; border:1px solid var(--line); padding:7px 12px; border-radius:7px; font-size:11px; background:var(--white); white-space:nowrap; }
+    .pill.primary { background:var(--green); color:var(--white); border-color:var(--green); }
+    .tabs { display:flex; justify-content:space-between; align-items:center; gap:12px; border-bottom:1px solid var(--line); margin-bottom:18px; }
+    .tab { display:inline-block; font-size:12px; padding:9px 0 11px; margin-right:22px; color:var(--muted); }
+    .tab.active { color:var(--green); border-bottom:2px solid var(--green); font-weight:650; }
+    .month-total { display:flex; gap:16px; justify-content:space-between; align-items:center; padding:15px 18px; background:var(--soft); border-radius:8px; margin-bottom:12px; }
+    .month-total span { font-size:12px; }
+    .month-total strong { font-size:25px; font-weight:550; font-variant-numeric:tabular-nums; letter-spacing:-.035em; }
+    .ledger { width:100%; border-collapse:collapse; font-size:12px; }
+    .ledger th { color:var(--muted); font-size:10px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; }
+    .ledger th,.ledger td { text-align:left; padding:11px 8px; border-bottom:1px solid var(--line); }
+    .ledger th:last-child,.ledger td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+    .amount { display:inline-block; min-width:92px; padding:6px 10px; background:var(--white); border:1px solid var(--line); border-radius:5px; text-align:right; font-variant-numeric:tabular-nums; }
+    .save { color:var(--muted); font-size:10px; margin:14px 0 0; }
+    .save::before { content:'✓'; color:var(--green); margin-right:6px; }
+    details { border-top:1px solid var(--line); margin-top:20px; }
+    summary { cursor:pointer; padding:14px 0; font-size:12px; color:var(--green); }
+    .bars { height:100px; display:flex; align-items:end; gap:12px; padding:8px 0; }
+    .bar { flex:1; height:var(--height); background:var(--green); border-radius:3px 3px 0 0; }
+    .chart-label { display:flex; justify-content:space-between; color:var(--muted); font-size:10px; }
+    .below-summary { display:flex; flex-wrap:wrap; gap:12px 32px; border-top:1px solid var(--line); margin-top:20px; padding-top:15px; color:var(--muted); font-size:11px; }
+    .below-summary strong { color:var(--ink); margin-left:6px; font-weight:550; }
+    .split-shell { display:grid; grid-template-columns:290px minmax(0,1fr); }
+    .property-list { padding:24px 18px; background:#f5f5ed; border-right:1px solid var(--line); }
+    .list-heading { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .list-heading h3 { font-size:16px; margin:0; }
+    .property { display:flex; align-items:center; gap:12px; padding:16px 12px; border-bottom:1px solid var(--line); }
+    .property.chosen { background:var(--soft); border-radius:8px; border:1px solid #bdcbb4; }
+    .property-letter { display:grid; place-items:center; width:36px; height:40px; border:1px solid #c4cfba; background:var(--white); border-radius:7px; font:20px Georgia,serif; flex-shrink:0; }
+    .property strong { font-size:12px; font-weight:600; }
+    .property p { font-size:10px; color:var(--muted); margin:2px 0 0; }
+    .property small { display:block; color:var(--green); font-size:10px; margin-top:5px; }
+    .list-foot { color:var(--muted); font-size:11px; margin-top:24px; }
+    .table-scroll { overflow-x:auto; }
+    .annual { border-collapse:separate; border-spacing:0; width:100%; min-width:1120px; font-size:11px; }
+    .annual th,.annual td { padding:13px 9px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+    .annual th { background:var(--paper); color:var(--muted); font-size:10px; font-weight:550; }
+    .annual th:first-child,.annual td:first-child { position:sticky; left:0; z-index:1; text-align:left; background:var(--white); border-right:1px solid var(--line); min-width:135px; }
+    .annual th:first-child { background:var(--paper); }
+    .annual .selected-month { background:var(--soft); }
+    .annual tfoot td,.annual tfoot td:first-child { background:var(--soft); font-weight:650; }
+    .annual td:last-child { font-weight:650; }
+    .overview-title { font:30px/1.2 Georgia,serif; margin:0 0 8px; }
+    .stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:24px 0; }
+    .stat { border:1px solid var(--line); border-radius:10px; padding:20px; }
+    .stat:first-child { background:var(--soft); }
+    .stat span { display:block; color:var(--muted); font-size:11px; }
+    .stat strong { display:block; font-size:28px; font-weight:500; margin-top:6px; letter-spacing:-.03em; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+    .overview-grid { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:28px; }
+    .overview-grid h4 { font-size:13px; font-weight:600; margin:0 0 12px; }
+    .overview-chart { padding:18px 0; }
+    .overview-chart .bars { height:150px; }
+    .property-summary { border-top:1px solid var(--line); }
+    .property-summary summary { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .property-summary summary::after { content:'Open expenses ↗'; font-size:10px; white-space:nowrap; }
+    .property-summary[open] summary::after { content:'Close editor ↑'; }
+    .property-summary .ledger { margin-bottom:16px; }
+    footer { border-top:1px solid var(--line); padding-top:28px; margin-top:48px; color:var(--muted); font-size:12px; }
+    @media (max-width:900px) { .shell { grid-template-columns:152px minmax(0,1fr); } .workspace { padding:22px; } .split-shell { grid-template-columns:235px minmax(0,1fr); } .overview-grid { grid-template-columns:1fr; } .account { display:none; } }
+    @media (max-width:650px) { main { padding:0 14px 36px; } .intro { padding:32px 20px; } .intro p { font-size:14px; } .option { padding-top:36px; } .option-heading { flex-direction:column; gap:10px; } .option-heading h2 { font-size:27px; } .shell,.split-shell { display:block; } .rail { border-right:0; border-bottom:1px solid var(--line); padding:12px; display:flex; flex-wrap:wrap; gap:5px; } .rail > .kicker,.rail .rail-divider,.rail .property-shortcut { display:none; } .rail-item { display:inline-block; margin:0; padding:8px 10px; } .workspace { padding:18px; } .appbar { padding:14px 18px; } .property-list { border-right:0; border-bottom:1px solid var(--line); padding:18px; } .property-list .property:not(.chosen),.list-foot { display:none; } .list-heading { margin-bottom:12px; } .stats { grid-template-columns:1fr; gap:10px; } .stat { display:flex; justify-content:space-between; gap:16px; align-items:center; padding:14px; } .stat strong { margin:0; font-size:25px; } .tabs { flex-wrap:wrap; gap:0; } .month-total { flex-wrap:wrap; } .overview-title { font-size:27px; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+  <header class="intro">
+    <div class="kicker">Property Expense Tracker · Design study</div>
+    <h1>One familiar style.<br>Four ways to work.</h1>
+    <p>Compare the same warm ivory and forest-green design across four layouts. Each puts a different task first. All names and amounts below are fictional sample data.</p>
+    <nav class="jump" aria-label="Jump to a layout">
+      <a href="#focused">01 · Focused workspace</a><a href="#split">02 · Property + editor</a><a href="#spreadsheet">03 · Spreadsheet</a><a href="#overview">04 · Overview + editor</a>
+    </nav>
+  </header>
+  <main>
+    <section class="option" id="focused" aria-labelledby="focused-title">
+      <div class="option-heading"><div><div class="kicker">01 / Everyday expense entry</div><h2 id="focused-title">Focused expense workspace</h2><p>A small sidebar, a compact period selector, and your expenses immediately in view. Portfolio summaries sit below the work.</p></div><span class="tag">Recommended</span></div>
+      <div class="screen">
+        <div class="appbar"><div class="brand"><span class="mark" aria-hidden="true">⌂</span> Property Expense Tracker</div><span class="account">Your workspace · Sample account</span></div>
+        <div class="shell">
+          <aside class="rail" aria-label="Example workspace navigation"><p class="kicker">Workspace</p><span class="rail-item current">Expenses</span><span class="rail-item">Properties</span><span class="rail-item">Categories</span><hr class="rail-divider"><p class="kicker">Your properties</p><span class="rail-item selected property-shortcut">Oak Street Duplex</span><span class="rail-item property-shortcut">Maple House</span><span class="rail-item property-shortcut">Cedar Cottage</span></aside>
+          <div class="workspace">
+            <div class="toolbar"><div><h3>Oak Street Duplex</h3><p class="sub">124 Oak Street · Monthly expenses</p></div><div class="controls"><span class="pill">‹ &nbsp; October 2026 &nbsp; ›</span><span class="pill">Export ↗</span></div></div>
+            <div class="tabs"><div><span class="tab active">Monthly</span><span class="tab">Annual</span></div><span class="sub">6 expense categories</span></div>
+            <div class="month-total"><span>Total this month</span><strong>$1,800.00</strong></div>
+            <table class="ledger"><caption hidden>Oak Street sample expenses for October 2026</caption><thead><tr><th scope="col">Expense category</th><th scope="col">Amount</th></tr></thead><tbody>
+              <tr><td>PITI</td><td><span class="amount">1,280.00</span></td></tr><tr><td>Gas &amp; Electric</td><td><span class="amount">186.00</span></td></tr><tr><td>Sewer &amp; Water</td><td><span class="amount">82.00</span></td></tr><tr><td>Cleaning</td><td><span class="amount">120.00</span></td></tr><tr><td>Lawn</td><td><span class="amount">65.00</span></td></tr><tr><td>Internet</td><td><span class="amount">67.00</span></td></tr>
+            </tbody></table>
+            <p class="save">Example save status · All changes saved</p>
+            <details><summary>Spending across the year</summary><div class="bars" role="img" aria-label="Illustrative monthly spending trend"><span class="bar" style="--height:65%"></span><span class="bar" style="--height:72%"></span><span class="bar" style="--height:60%"></span><span class="bar" style="--height:84%"></span><span class="bar" style="--height:70%"></span><span class="bar" style="--height:76%"></span></div><div class="chart-label"><span>Earlier months</span><span>Latest month</span></div></details>
+            <div class="below-summary"><span>Oak Street · Annual total <strong>$21,600</strong></span><span>Portfolio · Annual total <strong>$58,400</strong></span><span>Properties <strong>3</strong></span></div>
+          </div>
+        </div>
+      </div><p class="tradeoff"><strong>Choose this for:</strong> fast monthly entry. <strong>Tradeoff:</strong> portfolio totals take a supporting role.</p>
+    </section>
+
+    <section class="option" id="split" aria-labelledby="split-title">
+      <div class="option-heading"><div><div class="kicker">02 / Frequent property switching</div><h2 id="split-title">Property list + expense editor</h2><p>Your properties stay beside the editor. More room goes to choosing a home, with its address and monthly spending visible in the list.</p></div><span class="tag">Property-first</span></div>
+      <div class="screen">
+        <div class="appbar"><div class="brand"><span class="mark" aria-hidden="true">⌂</span> Property Expense Tracker</div><div class="controls"><span class="pill primary">Expenses</span><span class="pill">Categories</span><span class="pill">Export ↗</span></div></div>
+        <div class="split-shell">
+          <aside class="property-list" aria-label="Example property list"><div class="list-heading"><h3>Your properties</h3><span class="tag">3 homes</span></div>
+            <div class="property chosen"><span class="property-letter">O</span><div><strong>Oak Street Duplex</strong><p>124 Oak Street</p><small>$1,800 this month · Selected</small></div></div>
+            <div class="property"><span class="property-letter">M</span><div><strong>Maple House</strong><p>48 Maple Avenue</p><small>$1,450 this month</small></div></div>
+            <div class="property"><span class="property-letter">C</span><div><strong>Cedar Cottage</strong><p>9 Cedar Lane</p><small>$1,620 this month</small></div></div>
+            <p class="list-foot">+ Add or manage properties</p>
+          </aside>
+          <div class="workspace">
+            <div class="toolbar"><div><h3>Oak Street Duplex</h3><p class="sub">124 Oak Street · Selected property</p></div><span class="pill">October 2026 ▾</span></div>
+            <div class="tabs"><div><span class="tab active">Monthly expenses</span><span class="tab">Annual</span></div></div>
+            <div class="month-total"><span>October total</span><strong>$1,800.00</strong></div>
+            <table class="ledger"><caption hidden>Selected property sample expense editor</caption><thead><tr><th scope="col">Category</th><th scope="col">Amount</th></tr></thead><tbody>
+              <tr><td>PITI</td><td><span class="amount">1,280.00</span></td></tr><tr><td>Gas &amp; Electric</td><td><span class="amount">186.00</span></td></tr><tr><td>Sewer &amp; Water</td><td><span class="amount">82.00</span></td></tr><tr><td>Cleaning</td><td><span class="amount">120.00</span></td></tr><tr><td>Lawn</td><td><span class="amount">65.00</span></td></tr><tr><td>Internet</td><td><span class="amount">67.00</span></td></tr>
+            </tbody></table><p class="save">Example save status · All changes saved</p>
+          </div>
+        </div>
+      </div><p class="tradeoff"><strong>Choose this for:</strong> moving between properties throughout the day. <strong>Tradeoff:</strong> the property list takes more width; phones need a property picker.</p>
+    </section>
+
+    <section class="option" id="spreadsheet" aria-labelledby="spreadsheet-title">
+      <div class="option-heading"><div><div class="kicker">03 / Full-year review</div><h2 id="spreadsheet-title">Spreadsheet-first</h2><p>A wide annual ledger with a thin toolbar. Category names stay in place while the months scroll horizontally.</p></div><span class="tag">Numbers-first</span></div>
+      <div class="screen">
+        <div class="appbar"><div class="brand"><span class="mark" aria-hidden="true">⌂</span> Property Expense Tracker</div><span class="account">Expenses &nbsp; / &nbsp; Properties &nbsp; / &nbsp; Categories</span></div>
+        <div class="workspace">
+          <div class="toolbar"><div><h3>Annual expenses</h3><p class="sub">Oak Street Duplex · All 12 months</p></div><div class="controls"><span class="pill">Oak Street Duplex ▾</span><span class="pill">‹ &nbsp; 2026 &nbsp; ›</span><span class="pill">Export ↗</span></div></div>
+          <div class="tabs"><div><span class="tab">Monthly</span><span class="tab active">Annual</span></div><span class="sub">Annual total <strong>$21,600.00</strong></span></div>
+          <div class="table-scroll" role="region" aria-label="Annual expense table, scroll horizontally to see all months" tabindex="0">
+            <table class="annual"><caption hidden>Illustrative annual expenses: repeating monthly amounts, total $21,600</caption><thead><tr><th scope="col">Category</th><th scope="col">Jan</th><th scope="col">Feb</th><th scope="col">Mar</th><th scope="col">Apr</th><th scope="col">May</th><th scope="col">Jun</th><th scope="col">Jul</th><th scope="col">Aug</th><th scope="col">Sep</th><th scope="col" class="selected-month">Oct</th><th scope="col">Nov</th><th scope="col">Dec</th><th scope="col">Year total</th></tr></thead><tbody>
+              <tr><th scope="row">PITI</th><td>1,280</td><td>1,280</td><td>1,280</td><td>1,280</td><td>1,280</td><td>1,280</td><td>1,280</td><td>1,280</td><td>1,280</td><td class="selected-month">1,280</td><td>1,280</td><td>1,280</td><td>15,360</td></tr>
+              <tr><th scope="row">Gas &amp; Electric</th><td>186</td><td>186</td><td>186</td><td>186</td><td>186</td><td>186</td><td>186</td><td>186</td><td>186</td><td class="selected-month">186</td><td>186</td><td>186</td><td>2,232</td></tr>
+              <tr><th scope="row">Sewer &amp; Water</th><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td>82</td><td class="selected-month">82</td><td>82</td><td>82</td><td>984</td></tr>
+              <tr><th scope="row">Cleaning</th><td>120</td><td>120</td><td>120</td><td>120</td><td>120</td><td>120</td><td>120</td><td>120</td><td>120</td><td class="selected-month">120</td><td>120</td><td>120</td><td>1,440</td></tr>
+              <tr><th scope="row">Lawn</th><td>65</td><td>65</td><td>65</td><td>65</td><td>65</td><td>65</td><td>65</td><td>65</td><td>65</td><td class="selected-month">65</td><td>65</td><td>65</td><td>780</td></tr>
+              <tr><th scope="row">Internet</th><td>67</td><td>67</td><td>67</td><td>67</td><td>67</td><td>67</td><td>67</td><td>67</td><td>67</td><td class="selected-month">67</td><td>67</td><td>67</td><td>804</td></tr>
+            </tbody><tfoot><tr><td>Total · USD</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>1,800</td><td>21,600</td></tr></tfoot></table>
+          </div><p class="save">Example save status · All changes saved</p>
+        </div>
+      </div><p class="tradeoff"><strong>Choose this for:</strong> comparing months and reviewing a full year. <strong>Tradeoff:</strong> horizontal scrolling on smaller screens; less comfortable for phone entry.</p>
+    </section>
+
+    <section class="option" id="overview" aria-labelledby="overview-title">
+      <div class="option-heading"><div><div class="kicker">04 / Portfolio check-in</div><h2 id="overview-title">Overview + dedicated editor</h2><p>See the portfolio first, then open a property's expenses. Try expanding Oak Street below to see the move from overview to detail.</p></div><span class="tag">Overview-first</span></div>
+      <div class="screen">
+        <div class="appbar"><div class="brand"><span class="mark" aria-hidden="true">⌂</span> Property Expense Tracker</div><div class="controls"><span class="pill primary">Overview</span><span class="pill">Properties</span><span class="pill">Export ↗</span></div></div>
+        <div class="workspace">
+          <div class="toolbar"><div><p class="kicker">A clearer picture</p><h3 class="overview-title">Every home, in perspective.</h3><p class="sub">Your portfolio at a glance.</p></div><span class="pill">2026 ▾</span></div>
+          <div class="stats"><div class="stat"><span>Portfolio expenses · Year</span><strong>$58,400</strong></div><div class="stat"><span>October expenses</span><strong>$4,870</strong></div><div class="stat"><span>Active properties</span><strong>3</strong></div></div>
+          <div class="overview-grid">
+            <div class="overview-chart"><h4>Portfolio spending</h4><p class="sub">Illustrative monthly trend · USD</p><div class="bars" role="img" aria-label="Illustrative portfolio spending trend, January to December"><span class="bar" style="--height:55%"></span><span class="bar" style="--height:60%"></span><span class="bar" style="--height:50%"></span><span class="bar" style="--height:68%"></span><span class="bar" style="--height:64%"></span><span class="bar" style="--height:80%"></span><span class="bar" style="--height:72%"></span><span class="bar" style="--height:70%"></span><span class="bar" style="--height:90%"></span><span class="bar" style="--height:73%"></span><span class="bar" style="--height:68%"></span><span class="bar" style="--height:78%"></span></div><div class="chart-label"><span>Jan</span><span>Dec</span></div></div>
+            <div><h4>Your homes · October</h4>
+              <details class="property-summary"><summary><span><strong>Oak Street Duplex</strong><br><span class="sub">$1,800 this month</span></span></summary><table class="ledger"><caption hidden>Oak Street October expense detail</caption><tbody><tr><th scope="row">PITI</th><td>$1,280</td></tr><tr><th scope="row">Gas &amp; Electric</th><td>$186</td></tr><tr><th scope="row">Sewer &amp; Water</th><td>$82</td></tr><tr><th scope="row">Cleaning</th><td>$120</td></tr><tr><th scope="row">Lawn</th><td>$65</td></tr><tr><th scope="row">Internet</th><td>$67</td></tr></tbody></table></details>
+              <div class="property"><div><strong>Maple House</strong><p>$1,450 this month</p></div></div><div class="property"><div><strong>Cedar Cottage</strong><p>$1,620 this month</p></div></div>
+            </div>
+          </div>
+        </div>
+      </div><p class="tradeoff"><strong>Choose this for:</strong> checking portfolio spending before drilling into a home. <strong>Tradeoff:</strong> an extra step before entering expenses.</p>
+    </section>
+    <footer>Layout study only. Expense fields, navigation chips, and export labels illustrate placement; they do not change or save data. Jump links and expandable sections work. No external fonts, libraries, or network connection required.</footer>
+  </main>
+</body>
+</html>
