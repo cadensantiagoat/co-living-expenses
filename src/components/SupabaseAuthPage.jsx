@@ -119,12 +119,23 @@ function SupabaseAuthPage() {
   }
 
   return (
-    <div className="auth-page">
+    <main className="auth-page">
+      <section className="auth-story" aria-label="Property Expense Tracker">
+        <div className="auth-wordmark"><span className="brand-mark" aria-hidden="true">⌂</span> Property Expense Tracker</div>
+        <div className="auth-story-content">
+          <p className="eyebrow">A little clarity for every home</p>
+          <h1>Good homes.<br />Clear finances.<br /><em>Less to worry about.</em></h1>
+          <p>Bring your property expenses together, so you can focus on the places people call home.</p>
+          <div className="home-illustration" aria-hidden="true"><div className="home-roof" /><div className="home-body"><span /><span /><span /><span /><span /><span /></div><div className="home-tree" /></div>
+        </div>
+        <p className="auth-story-footer">Every property. Every expense. All in one place.</p>
+      </section>
+      <div className="auth-form-region">
       <div className="auth-card">
-        <h1>Property Expense Tracker</h1>
+        <p className="eyebrow">Your property workspace</p>
 
         <p className="auth-subtitle">
-          Supabase Authentication
+          A simpler way to keep track of home.
         </p>
 
         <h2>
@@ -237,7 +248,8 @@ function SupabaseAuthPage() {
           </button>
         </p>
       </div>
-    </div>
+      </div>
+    </main>
   );
 }
 

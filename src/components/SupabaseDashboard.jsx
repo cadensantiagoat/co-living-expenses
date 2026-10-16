@@ -109,6 +109,7 @@ function SupabaseDashboard({ user, onLogout }) {
   const [exporting, setExporting] = useState(false);
   
   const [expenseView, setExpenseView] = useState("monthly");
+  const [workspace, setWorkspace] = useState("expenses");
 
   const [selectedMonth, setSelectedMonth] = useState(
     new Date().getMonth()
@@ -457,16 +458,17 @@ function goToNextMonth() {
   if (loading) {
     return (
       <main className="container">
-        <p>Loading your PostgreSQL data...</p>
+        <p role="status">Getting your workspace ready...</p>
       </main>
     );
   }
 
   return (
     <div className="app">
+      <a className="skip-link" href="#workspace">Skip to workspace</a>
       <header className="header">
         <div className="header-inner">
-          <h1>Property Expense Tracker</h1>
+          <div className="brand"><span className="brand-mark" aria-hidden="true">⌂</span><span>Property Expense Tracker<small>A little clarity for every home.</small></span></div>
 
           <div className="user-controls">
             <span className="user-email">{user.email}</span>
@@ -483,15 +485,43 @@ function goToNextMonth() {
         </div>
       </header>
 
-      <main className="container">
+      <div className="app-layout">
+      <aside className="sidebar" aria-label="Workspace navigation">
+        <p className="eyebrow">Your workspace</p>
+        <nav className="workspace-nav" aria-label="Main navigation">
+          <button type="button" aria-current={workspace === "expenses" ? "page" : undefined} onClick={() => setWorkspace("expenses")}>Expenses <span aria-hidden="true">↗</span></button>
+          <button type="button" aria-current={workspace === "properties" ? "page" : undefined} onClick={() => setWorkspace("properties")}>Properties</button>
+          <button type="button" aria-current={workspace === "categories" ? "page" : undefined} onClick={() => setWorkspace("categories")}>Categories</button>
+        </nav>
+        <div className="sidebar-properties">
+          <p className="eyebrow">Your properties</p>
+          {properties.filter((property) => !property.archived_at).map((property) => (
+            <button type="button" key={property.id} className="sidebar-property" aria-pressed={selectedId === property.id} disabled={working} onClick={() => { setSelectedId(property.id); setWorkspace("expenses"); }}>
+              <span className="property-initial" aria-hidden="true">{property.name.slice(0, 1).toUpperCase()}</span>
+              <span>{property.name}</span>
+            </button>
+          ))}
+          <button type="button" className="manage-properties" onClick={() => setWorkspace("properties")}>+ Manage properties</button>
+        </div>
+        <p className="sidebar-note">Every home.<br />Every expense.<br /><em>All in one place.</em></p>
+      </aside>
+      <main className="container" id="workspace">
+        <div className="mobile-property-picker">
+          <label htmlFor="mobile-property">Property</label>
+          <select id="mobile-property" value={selectedId} disabled={working} onChange={(event) => { setSelectedId(event.target.value); setWorkspace("expenses"); }}>
+            {!selectedId && <option value="">Select a property</option>}
+            {properties.filter((property) => !property.archived_at || property.id === selectedId).map((property) => <option key={property.id} value={property.id}>{property.name}{property.archived_at ? " (archived)" : ""}</option>)}
+          </select>
+        </div>
         <section className="intro">
           
 
 <div className="dashboard-heading">
   <div className="dashboard-heading-text">
-    <h1>Property Dashboard</h1>
+    <p className="eyebrow">A clearer picture</p>
+    <h1>{workspace === "properties" ? "Your properties" : workspace === "categories" ? "Make it your own" : "Feel at home with your finances."}</h1>
     <p>
-      Manage your properties and expenses with PostgreSQL.
+      {workspace === "properties" ? "A place for every property in your portfolio." : workspace === "categories" ? "Organize expenses in a way that works for you." : "Your properties, expenses, and the details that matter."}
     </p>
   </div>
 
@@ -503,7 +533,7 @@ function goToNextMonth() {
   >
     {exporting
       ? "Generating Excel..."
-      : "Download Excel Workbook"}
+      : "Export workbook ↗"}
   </button>
 </div>
 
@@ -522,20 +552,20 @@ function goToNextMonth() {
           </p>
         )}
 
-<SummaryCards
+{workspace === "expenses" && <SummaryCards
   propertyCount={
     properties.filter((property) => !property.archived_at).length
   }
   propertyTotal={yearlyTotal}
   portfolioTotal={portfolioTotal}
   year={year}
-/>
+/>}
 
         
-<PropertyManagement
+{workspace === "properties" && <PropertyManagement
   properties={properties}
   selectedId={selectedId}
-  onSelectProperty={setSelectedId}
+  onSelectProperty={(id) => { setSelectedId(id); setWorkspace("expenses"); }}
   onAddProperty={async (name, address) => {
   const property = await createProperty(name, address);
 
@@ -549,16 +579,16 @@ function goToNextMonth() {
   showArchived={showArchived}
   onShowArchivedChange={setShowArchived}
   disabled={working}
-/>
+/>}
 
 
         
-{selectedProperty ? (
+{workspace === "expenses" && (selectedProperty ? (
   <>
     {/* =====================================
         PROPERTY HEADER AND YEAR SELECTOR
     ===================================== */}
-    <section className="panel">
+    <section className="property-context">
       <div className="table-header">
         <div>
           <h3>{selectedProperty.name}</h3>
@@ -867,11 +897,12 @@ function goToNextMonth() {
     <p>
       Add or select a property to begin tracking expenses.
     </p>
+    <button type="button" onClick={() => setWorkspace("properties")}>Manage properties</button>
   </section>
-)}
+))}
 
 
-<ExpenseCategoryManager
+{workspace === "categories" && <ExpenseCategoryManager
   categories={categories}
   disabled={working}
   onAddCategory={async (name) => {
@@ -890,8 +921,9 @@ function goToNextMonth() {
 
     setStatus("Category renamed.");
   }}
-/>
+/>}
       </main>
+      </div>
     </div>
   );
 }

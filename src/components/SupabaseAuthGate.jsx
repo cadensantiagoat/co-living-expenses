@@ -86,15 +86,15 @@ function SupabaseAuthGate() {
 
   if (loading) {
     return (
-      <div className="auth-page">
-        <p>Checking Supabase authentication...</p>
+      <div className="auth-page auth-page-simple">
+        <p role="status">Getting your workspace ready...</p>
       </div>
     );
   }
 
   if (recoveryMode) {
     return (
-      <div className="auth-page">
+      <div className="auth-page auth-page-simple">
         <div className="auth-card">
           <h2>Create New Password</h2>
 

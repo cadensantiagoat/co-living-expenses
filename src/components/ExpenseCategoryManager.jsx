@@ -82,6 +82,7 @@ function ExpenseCategoryManager({
           type="text"
           maxLength={60}
           placeholder="Add a new expense category..."
+          aria-label="New expense category"
           value={newName}
           disabled={disabled}
           onChange={(event) =>
@@ -112,6 +113,7 @@ function ExpenseCategoryManager({
                 <input
                   type="text"
                   maxLength={60}
+                  aria-label="Category name"
                   value={editingName}
                   disabled={disabled}
                   onChange={(event) =>

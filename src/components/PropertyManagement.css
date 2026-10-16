@@ -9,7 +9,7 @@
   
   .pm-heading p {
     margin: 0;
-    color: #64748b;
+    color: var(--muted);
     font-size: 14px;
   }
   
@@ -24,7 +24,7 @@
     width: 100%;
     min-width: 0;
     padding: 11px 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #cbd2c5;
     border-radius: 8px;
   }
   
@@ -35,7 +35,7 @@
   .pm-tabs {
     display: flex;
     gap: 12px;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--line);
     margin-bottom: 16px;
   }
   
@@ -43,19 +43,19 @@
     background: transparent;
     border: none;
     border-radius: 0;
-    color: #64748b;
+    color: var(--muted);
     padding: 12px 16px;
     font-weight: 600;
     border-bottom: 2px solid transparent;
   }
   
   .pm-tab:hover {
-    background: #f8fafc;
+    background: var(--surface);
   }
   
   .pm-tab.active {
-    color: #2563eb;
-    border-bottom-color: #2563eb;
+    color: var(--green);
+    border-bottom-color: var(--green);
   }
   
   .pm-list {
@@ -67,14 +67,14 @@
   
 .pm-card {
   position: relative;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--line);
   border-radius: 10px;
   padding: 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  background: #f8fafc;
+  background: var(--surface);
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 
@@ -91,12 +91,12 @@
   }
   
   .pm-property-info > span {
-    color: #64748b;
+    color: var(--muted);
     font-size: 13px;
   }
   
   .pm-property-info .pm-selected {
-    color: #2563eb;
+    color: var(--green);
     font-weight: 600;
     font-size: 12px;
   }
@@ -113,12 +113,12 @@
   }
   
   button.pm-secondary {
-    background: #e2e8f0;
-    color: #334155;
+    background: var(--line);
+    color: var(--ink);
   }
   
   button.pm-secondary:hover {
-    background: #cbd5e1;
+    background: #cbd2c5;
   }
   
   .pm-edit-form {
@@ -135,13 +135,13 @@
   }
   
   .pm-empty {
-    color: #64748b;
+    color: var(--muted);
     text-align: center;
     padding: 24px 0;
   }
   
   .pm-error {
-    color: #b91c1c;
+    color: var(--error);
     font-size: 13px;
   }
   
@@ -164,16 +164,16 @@
 /* Clickable property cards */
 
 .pm-card:hover {
-  background: #f1f5f9;
+  background: var(--canvas);
 }
 
 .pm-card-selected {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--green);
+  background: var(--soft);
 }
 
 .pm-card-selected:hover {
-  background: #dbeafe;
+  background: var(--soft);
 }
 
 /* Invisible button covering the whole card */
@@ -194,7 +194,7 @@
 }
 
 .pm-card-open:focus-visible {
-  outline: 3px solid #2563eb;
+  outline: 3px solid var(--green);
   outline-offset: 2px;
 }
 
@@ -234,7 +234,7 @@
 .pm-field label {
   font-size: 13px;
   font-weight: 600;
-  color: #334155;
+  color: var(--ink);
 }
 
 .pm-add-form > button {
@@ -250,4 +250,3 @@
     width: 100%;
   }
 }
-
