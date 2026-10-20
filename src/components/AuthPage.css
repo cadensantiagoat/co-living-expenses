@@ -15,6 +15,10 @@
 .auth-card form { display: flex; flex-direction: column; }
 .auth-card label { margin-bottom: 8px; }
 .auth-card input { width: 100%; margin-bottom: 20px; padding: 13px 14px; }
+.password-field { position: relative; margin-bottom: 20px; }
+.auth-card .password-field input { margin-bottom: 0; padding-right: 64px; }
+.password-toggle { position: absolute; top: 50%; right: 6px; transform: translateY(-50%); background: transparent; color: var(--green); padding: 6px 8px; font-size: 12px; font-weight: 500; }
+.password-toggle:hover:not(:disabled) { background: transparent; text-decoration: underline; }
 .auth-submit { width: 100%; padding: 14px; margin-top: 4px; }
 .auth-link-button { background: transparent; color: var(--accent); padding: 8px 0; font-weight: 500; font-size: 13px; }
 .auth-link-button:hover:not(:disabled) { background: transparent; text-decoration: underline; }
