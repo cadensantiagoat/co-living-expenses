@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import YearSelector from "./YearSelector";
 import SummaryCards from "./SummaryCards";
 import MonthlyChart from "./MonthlyChart";
+import TopProgressBar from "./TopProgressBar";
 import { exportExpenseWorkbook } from "../services/excelExportService";
 
 import {
@@ -102,6 +103,7 @@ function SupabaseDashboard({ user, onLogout }) {
   const [editingName, setEditingName] = useState("");
 
   const [loading, setLoading] = useState(true);
+  const [loadedYear, setLoadedYear] = useState(null);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -157,8 +159,6 @@ function SupabaseDashboard({ user, onLogout }) {
     let active = true;
 
     async function loadYear() {
-      setLoading(true);
-
       try {
         const rows = await getExpenses(year);
 
@@ -169,7 +169,7 @@ function SupabaseDashboard({ user, onLogout }) {
       } catch (err) {
         if (active) setError(err.message);
       } finally {
-        if (active) setLoading(false);
+        if (active) setLoadedYear(year);
       }
     }
 
@@ -455,7 +455,10 @@ function goToNextMonth() {
     0
   );
 
-  if (loading) {
+  // Keep the previous year's data on screen (dimmed) while the new year loads.
+  const refreshing = loadedYear !== null && loadedYear !== year;
+
+  if (loading || loadedYear === null) {
     return (
       <main className="container">
         <p role="status">Getting your workspace ready...</p>
@@ -465,6 +468,7 @@ function goToNextMonth() {
 
   return (
     <div className="app">
+      <TopProgressBar active={refreshing || working || exporting} />
       <a className="skip-link" href="#workspace">Skip to workspace</a>
       <header className="header">
         <div className="header-inner">
@@ -508,7 +512,7 @@ function goToNextMonth() {
           <button type="button" className="manage-properties" onClick={() => setWorkspace("properties")}>+ Add or manage properties</button>
         </div>
       </aside>
-      <main className="container" id="workspace">
+      <main className={`container${refreshing ? " is-refreshing" : ""}`} id="workspace" aria-busy={refreshing}>
         <div className="mobile-property-picker">
           <label htmlFor="mobile-property">Property</label>
           <select id="mobile-property" value={selectedId} disabled={working} onChange={(event) => { setSelectedId(event.target.value); setWorkspace("expenses"); }}>
@@ -716,7 +720,7 @@ function goToNextMonth() {
                     category.id,
                     selectedMonth + 1
                   )}
-                  disabled={working || isArchived}
+                  disabled={working || isArchived || refreshing}
                   onSave={(amount) =>
                     handleSaveExpense(
                       category.id,
@@ -789,7 +793,7 @@ function goToNextMonth() {
                             category.id,
                             month
                           )}
-                          disabled={working || isArchived}
+                          disabled={working || isArchived || refreshing}
                           onSave={(amount) =>
                             handleSaveExpense(
                               category.id,
