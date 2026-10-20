@@ -1,29 +1,62 @@
 :root {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #283c32;
-  background: #f7f6f0;
-  --canvas: #f7f6f0;
-  --surface: #fffefa;
-  --ink: #283c32;
-  --muted: #697269;
-  --green: #285543;
-  --green-hover: #1c4233;
-  --soft: #eaf0e7;
-  --line: #dfE3d8;
+  color: #3a2a1e;
+  background: #faf5ec;
+  /* warm "porch light" palette: ember accent on lamplit cream */
+  --canvas: #faf5ec;
+  --surface: #fffcf6;
+  --ink: #3a2a1e;
+  --muted: #76614f;
+  --accent: #a64b1a;
+  --accent-hover: #863a12;
+  --soft: #fbe9cf;
+  --line: #eddcc4;
+  --glow: #f4b65a;
+  --on-accent: #fffefa;
+  --line-strong: #dcc7ab;
+  --story-bg: #f6e3c6;
+  --story-text: #6b5442;
+  --sketch-line: #9a6a42;
+  --sketch-ground: #c9a27a;
+  --sketch-fill: #e8c9a0;
   --error: #a1302c;
+  color-scheme: light dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
+/* dark mode: the porch after sundown, ember accent on warm charcoal */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f3e6d6;
+    background: #1c1510;
+    --canvas: #1c1510;
+    --surface: #261d16;
+    --ink: #f3e6d6;
+    --muted: #bba58f;
+    --accent: #f0a04b;
+    --accent-hover: #f6b768;
+    --on-accent: #1c1510;
+    --soft: #3a2a1c;
+    --line: #3b2e23;
+    --line-strong: #5a4636;
+    --story-bg: #2a1f17;
+    --story-text: #cdb59c;
+    --sketch-line: #b88a5e;
+    --sketch-ground: #6e5440;
+    --sketch-fill: #4a3828;
+    --error: #f08a7a;
+  }
+}
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
 button, input, select { font: inherit; }
-button { border: 1px solid transparent; border-radius: 8px; background: var(--green); color: #fffefa; padding: 11px 16px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background .15s ease; }
-button:where(:hover:not(:disabled)) { background: var(--green-hover); }
+button { border: 1px solid transparent; border-radius: 8px; background: var(--accent); color: var(--on-accent); padding: 11px 16px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background .15s ease; }
+button:where(:hover:not(:disabled)) { background: var(--accent-hover); }
 button:disabled { opacity: .55; cursor: not-allowed; }
-input, select { min-width: 0; border: 1px solid #cbd2c5; border-radius: 8px; padding: 11px 12px; color: var(--ink); background: var(--surface); }
+input, select { min-width: 0; border: 1px solid var(--line-strong); border-radius: 8px; padding: 11px 12px; color: var(--ink); background: var(--surface); }
 input:disabled, select:disabled { opacity: .65; }
-:focus-visible { outline: 3px solid #789575; outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--glow); outline-offset: 3px; }
 label { font-size: 13px; font-weight: 600; }
 h1, h2, h3, p { overflow-wrap: anywhere; }
 .eyebrow { margin: 0 0 12px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }

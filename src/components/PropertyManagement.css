@@ -24,7 +24,7 @@
     width: 100%;
     min-width: 0;
     padding: 11px 12px;
-    border: 1px solid #cbd2c5;
+    border: 1px solid var(--line-strong);
     border-radius: 8px;
   }
   
@@ -54,8 +54,8 @@
   }
   
   .pm-tab.active {
-    color: var(--green);
-    border-bottom-color: var(--green);
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
   
   .pm-list {
@@ -96,7 +96,7 @@
   }
   
   .pm-property-info .pm-selected {
-    color: var(--green);
+    color: var(--accent);
     font-weight: 600;
     font-size: 12px;
   }
@@ -118,7 +118,7 @@
   }
   
   button.pm-secondary:hover {
-    background: #cbd2c5;
+    background: var(--line-strong);
   }
   
   .pm-edit-form {
@@ -168,7 +168,7 @@
 }
 
 .pm-card-selected {
-  border-color: var(--green);
+  border-color: var(--accent);
   background: var(--soft);
 }
 
@@ -194,7 +194,7 @@
 }
 
 .pm-card-open:focus-visible {
-  outline: 3px solid var(--green);
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 

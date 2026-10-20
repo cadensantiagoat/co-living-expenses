@@ -64,7 +64,7 @@ export async function exportExpenseWorkbook() {
   ).default;
 
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Property Expense Tracker";
+  workbook.creator = "Porchlight";
   workbook.created = new Date();
 
   const currencyFormat = '"$"#,##0.00;[Red]("$"#,##0.00)';

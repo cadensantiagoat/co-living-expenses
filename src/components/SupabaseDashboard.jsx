@@ -468,7 +468,7 @@ function goToNextMonth() {
       <a className="skip-link" href="#workspace">Skip to workspace</a>
       <header className="header">
         <div className="header-inner">
-          <div className="brand"><span className="brand-mark" aria-hidden="true">⌂</span><span>Property Expense Tracker<small>A little clarity for every home.</small></span></div>
+          <div className="brand"><span className="brand-mark" aria-hidden="true">⌂</span><span>Porchlight<small>A little clarity for every home.</small></span></div>
 
           <div className="user-controls">
             <span className="user-email">{user.email}</span>

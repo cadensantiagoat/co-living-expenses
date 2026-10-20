@@ -120,8 +120,8 @@ function SupabaseAuthPage() {
 
   return (
     <main className="auth-page">
-      <section className="auth-story" aria-label="Property Expense Tracker">
-        <div className="auth-wordmark"><span className="brand-mark" aria-hidden="true">⌂</span> Property Expense Tracker</div>
+      <section className="auth-story" aria-label="Porchlight">
+        <div className="auth-wordmark"><span className="brand-mark" aria-hidden="true">⌂</span> Porchlight</div>
         <div className="auth-story-content">
           <p className="eyebrow">A little clarity for every home</p>
           <h1>Good homes.<br />Clear finances.<br /><em>Less to worry about.</em></h1>
