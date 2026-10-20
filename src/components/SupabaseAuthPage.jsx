@@ -1,12 +1,14 @@
 
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import PasswordInput from "./PasswordInput";
 import "./AuthPage.css";
 
 function SupabaseAuthPage() {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -23,6 +25,7 @@ function SupabaseAuthPage() {
   function changeMode() {
     setMode(mode === "login" ? "register" : "login");
     setPassword("");
+    setConfirmPassword("");
     clearMessages();
   }
 
@@ -30,6 +33,12 @@ function SupabaseAuthPage() {
     event.preventDefault();
 
     clearMessages();
+
+    if (mode === "register" && password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -165,9 +174,8 @@ function SupabaseAuthPage() {
             Password
           </label>
 
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             value={password}
             onChange={(event) =>
               setPassword(event.target.value)
@@ -181,6 +189,26 @@ function SupabaseAuthPage() {
             minLength={6}
             required
           />
+
+          {mode === "register" && (
+            <>
+              <label htmlFor="confirm-password">
+                Confirm Password
+              </label>
+
+              <PasswordInput
+                id="confirm-password"
+                value={confirmPassword}
+                onChange={(event) =>
+                  setConfirmPassword(event.target.value)
+                }
+                placeholder="Re-enter your password"
+                autoComplete="new-password"
+                minLength={6}
+                required
+              />
+            </>
+          )}
 
           {error && (
             <p className="auth-error" role="alert">

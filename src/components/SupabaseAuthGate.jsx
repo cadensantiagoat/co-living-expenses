@@ -2,6 +2,7 @@ import SupabaseDashboard from "./SupabaseDashboard"
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import SupabaseAuthPage from "./SupabaseAuthPage";
+import PasswordInput from "./PasswordInput";
 import "./AuthPage.css";
 
 function SupabaseAuthGate() {
@@ -10,6 +11,7 @@ function SupabaseAuthGate() {
 
   const [recoveryMode, setRecoveryMode] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -69,6 +71,11 @@ function SupabaseAuthGate() {
     setError("");
     setMessage("");
 
+    if (newPassword !== confirmNewPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     const { error: updateError } =
       await supabase.auth.updateUser({
         password: newPassword,
@@ -80,7 +87,12 @@ function SupabaseAuthGate() {
     }
 
     setNewPassword("");
+    setConfirmNewPassword("");
     setMessage("Password updated successfully.");
+  }
+
+  function handleRecoveryDone() {
+    setMessage("");
     setRecoveryMode(false);
   }
 
@@ -88,6 +100,28 @@ function SupabaseAuthGate() {
     return (
       <div className="auth-page auth-page-simple">
         <p role="status">Getting your workspace ready...</p>
+      </div>
+    );
+  }
+
+  if (recoveryMode && message) {
+    return (
+      <div className="auth-page auth-page-simple">
+        <div className="auth-card">
+          <h2>Password Updated</h2>
+
+          <p className="auth-message" role="status">
+            {message}
+          </p>
+
+          <button
+            className="auth-submit"
+            type="button"
+            onClick={handleRecoveryDone}
+          >
+            Continue to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -103,14 +137,28 @@ function SupabaseAuthGate() {
               New Password
             </label>
 
-            <input
+            <PasswordInput
               id="new-password"
-              type="password"
               autoComplete="new-password"
               minLength={8}
               value={newPassword}
               onChange={(event) =>
                 setNewPassword(event.target.value)
+              }
+              required
+            />
+
+            <label htmlFor="confirm-new-password">
+              Confirm New Password
+            </label>
+
+            <PasswordInput
+              id="confirm-new-password"
+              autoComplete="new-password"
+              minLength={8}
+              value={confirmNewPassword}
+              onChange={(event) =>
+                setConfirmNewPassword(event.target.value)
               }
               required
             />
